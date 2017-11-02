@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vibration Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <link href="styles.css" rel="stylesheet">
+	
+
+	 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="antixss.js" type="text/javascript"></script>
+    
+	
+	<script src="./angular.js" type="text/javascript"></script>
+	<script src="./main.js" type="text/javascript"></script>
+</head>
+
+<body ng-app="vibrationDashboard" ng-controller="mainCtrl">
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header " style="margin-left:350px">
+      
+	  <h3 >{{Title}}</h3>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid" style="margin-top:80px">
+	<div class="row">
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">meter1</div>{{packets[0].Flag0[0]}}
+				<div id="gaugeDemo" class="gauge gauge-big  panel-body" ng-class="{guage-red:true}">
+				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
+				</div>
+	
+	</div>
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">meter2</div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body">
+				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
+				</div>
+	
+	</div>
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">meter3</div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body">
+				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
+				</div>
+	
+	</div>
+	</div>
+	
+	<div class="alert alert-danger " ng-show="message && !packetDetail" style="text-align:center;background-color:red">
+  <strong style="color:white">{{message}}!!!</strong>
+</div>
+<div class="row table-responsive" ng-show="!packetDetail">
+	
+	<table class="table table-bordered table-hover table-responsive" style="width:auto;margin:5px" ng-mouseleave="changeColordrop()">
+  <thead class="blue-grey lighten-4" style="background-color:deepskyblue">
+    <tr>
+      <th>#Name</th>
+      <th>Type</th>
+      <th>AMBIENTTEMP</th>
+      <th>OBJECTTEMP</th>
+      <th>HUMIDITY</th>
+      <th>ACCELX</th>
+      <th>ACCELY</th>
+      <th>ACCELZ</th>
+      <th>GYROX</th>
+      <th>GYROY</th>
+      <th>GYROZ</th>
+      <th>MAGX</th>
+      <th>MAGY</th>
+      <th>MAGZ</th>
+      <th>LIGHT</th>
+      <th>TIMESENT</th>
+      <th>TIMEAUTO</th>
+      <th>LATTITUDE</th>
+      <th>LONGITUDE<th>
+    </tr>
+  </thead>
+  <tbody >
+    <tr ng-repeat="item in packets" class="test{{$index}}" ng-class="{'test{{$index}}':FlagFn(item,$index) == false}"  ng-mouseover="changeColor(item,$index)">
+      <td ng-click="PacketLoad($index)" style="cursor:pointer"><a href="#">{{item.MyName}}</a></td>
+      <td>{{item.type}}</td>
+      <td>{{item.AMBIENTTEMP[0]}}</td>
+      <td>{{item.OBJECTTEMP[0]}}</td>
+      <td>{{item.HUMIDITY[0]}}</td>
+      <td>{{item.ACCELX[0]}}</td>
+      <td>{{item.ACCELY[0]}}</td>
+      <td>{{item.ACCELZ[0]}}</td>
+      <td>{{item.GYROX[0]}}</td>
+      <td>{{item.GYROY[0]}}</td>
+      <td>{{item.GYROZ[0]}}</td>
+      <td>{{item.MAGX[0]}}</td>
+      <td>{{item.MAGY[0]}}</td>
+      <td>{{item.MAGZ[0]}}</td>
+      <td>{{item.LIGHT[0]}}</td>
+      <td>{{item.TIMESENT[0]}}</td>
+      <td>{{item.TIMEAUTO[0]}}</td>
+      <td>{{item.LATTITUDE[0]}}</td>
+      <td>{{item.LONGITUDE[0]}}<td>
+    </tr>    
+  </tbody>
+</table>
+</div>
+	
+</div>
+   
+   <div class="container-fluid row table-responsive panel panel-primary" ng-show="packetDetail">
+   <div class="panel-heading row"><h3 class="col-md-11 centerText">{{packetDetail.MyName}}</h3>
+	<button type="button" class="btn btn-default col-md-1" ng-click="packetDetail = !packetDetail">Back</button>
+	</div>
+	<table class="table table-bordered table-hover table-responsive panel-body" style="width:auto;margin:5px";>
+  <thead class="blue-grey lighten-4" style="background-color:deepskyblue">
+    <tr>
+      <th>#Name</th>
+      <th>Type</th>
+      <th>AMBIENTTEMP</th>
+      <th>OBJECTTEMP</th>
+      <th>HUMIDITY</th>
+      <th>ACCELX</th>
+      <th>ACCELY</th>
+      <th>ACCELZ</th>
+      <th>GYROX</th>
+      <th>GYROY</th>
+      <th>GYROZ</th>
+      <th>MAGX</th>
+      <th>MAGY</th>
+      <th>MAGZ</th>
+      <th>LIGHT</th>
+      <th>TIMESENT</th>
+      <th>TIMEAUTO</th>
+      <th>LATTITUDE</th>
+      <th>LONGITUDE<th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="item in packetDetail.AMBIENTTEMP track by $index"  ng-class="{'Flag':packetDetailFlag($index) == true}" >
+      <td>{{packetDetail.MyName}}</td>
+      <td>{{packetDetail.type}}</td>
+      <td>{{packetDetail.AMBIENTTEMP[$index]}}</td>
+      <td>{{packetDetail.OBJECTTEMP[$index]}}</td>
+      <td>{{packetDetail.HUMIDITY[$index]}}</td>
+      <td>{{packetDetail.ACCELX[$index]}}</td>
+      <td>{{packetDetail.ACCELY[$index]}}</td>
+      <td>{{packetDetail.ACCELZ[$index]}}</td>
+      <td>{{packetDetail.GYROX[$index]}}</td>
+      <td>{{packetDetail.GYROY[$index]}}</td>
+      <td>{{packetDetail.GYROZ[$index]}}</td>
+      <td>{{packetDetail.MAGX[$index]}}</td>
+      <td>{{packetDetail.MAGY[$index]}}</td>
+      <td>{{packetDetail.MAGZ[$index]}}</td>
+      <td>{{packetDetail.LIGHT[$index]}}</td>
+      <td>{{packetDetail.TIMESENT[$index]}}</td>
+      <td>{{packetDetail.TIMEAUTO[$index]}}</td>
+      <td>{{packetDetail.LATTITUDE[$index]}}</td>
+      <td>{{packetDetail.LONGITUDE[$index]}}<td>
+    </tr>    
+  </tbody>
+</table>
+</div>
+
+	
+</body>
+
+</html>
