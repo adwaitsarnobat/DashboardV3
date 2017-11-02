@@ -36,6 +36,32 @@
   </div>
 </nav>
 <div class="container-fluid" style="margin-top:80px"></div>
+
+	<!-- guage -->
+	<div class="row custStyle" ng-show="!packetDetail">
+	<div class="col-md-4 panel panel-primary guageHeight">
+	<div class="panel-heading">Vibration Sensitive</div>
+				<div id="gaugeDemo" class="gauge gauge-big panel-body" ng-class="packet1[0]">
+				<div class="gauge-arrow" style={{packet1[1]}}></div>
+				</div>
+	
+	</div>
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">LIGHT Sensitive</div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="packet2[0]">
+				<div class="gauge-arrow" style={{packet2[1]}}></div>
+				</div>
+	
+	</div>
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">Heat Sensitive</div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="packet3[0]">
+				<div class="gauge-arrow" style={{packet3[1]}}></div>
+				</div>
+	
+	</div>
+	</div>
+	<!-- guage -->
 	
 	<div>
 	<div class="alert alert-info " ng-hide="message || packetDetail" style="text-align:center;">
@@ -45,7 +71,7 @@
 		<strong style="color:white">{{message}}!!!</strong>
 	</div>
 	</div>
-<div class="row table-responsive" ng-show="!packetDetail" style="width:auto;margin:5px">
+<div class="row table-responsive custStyle" ng-show="!packetDetail" >
 	
 	<table class="table table-bordered table-hover table-responsive"  >
   <thead class="blue-grey lighten-4" style="background-color:deepskyblue">

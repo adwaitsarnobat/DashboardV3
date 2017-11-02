@@ -141,5 +141,8 @@ var TemperatureFlag = [];
 		}
 	};	
 	$scope.packets[2]["Flag2"]=TemperatureFlag;
+	$scope.packet1 = $scope.packets[0].Flag0[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
+	$scope.packet2 = $scope.packets[1].Flag1[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
+	$scope.packet3 = $scope.packets[2].Flag2[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
 	console.log($scope.packets)
 	});
