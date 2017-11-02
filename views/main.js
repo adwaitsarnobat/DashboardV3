@@ -10,10 +10,10 @@ OBJECTTEMP:[23,24,23,22,21],
 HUMIDITY:[65,71,80,66,72],
 	ACCELX	:[23,24,23,22,21],
 	ACCELY	:[23,24,23,22,21],
-	ACCELZ	:[23,24,23,22,21],
+	ACCELZ	:[53,24,23,52,21],
 	GYROX	:[19,22,32,12,22],
 	GYROY	:[12,12,12,13,12],
-	GYROZ	:[11,14,13,21,33],
+	GYROZ	:[11,14,13,50,33],
 	MAGX	:[23,24,23,22,21],
 	MAGY	:[23,24,23,22,21],
 	MAGZ	:[23,24,23,22,21],
@@ -30,7 +30,7 @@ MyName:"PACKET2",
 type:"LIGHT Sensitive",
 AMBIENTTEMP:[45,43,45,44,43],
 OBJECTTEMP:[23,24,23,22,21],
-HUMIDITY:[65,71,80,66,72],
+HUMIDITY:[75,71,80,66,72],
 	ACCELX	:[23,24,23,22,21],
 	ACCELY	:[23,24,23,22,21],
 	ACCELZ	:[23,24,23,22,21],
@@ -40,7 +40,7 @@ HUMIDITY:[65,71,80,66,72],
 	MAGX	:[23,24,23,22,21],
 	MAGY	:[23,24,23,22,21],
 	MAGZ	:[23,24,23,22,21],
-	LIGHT	:[23,24,23,22,21],
+	LIGHT	:[53,24,53,22,21],
 	TIMESENT	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
 	TIMEAUTO	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
 	LATTITUDE	:[30.2922902,30.2922902,34.723881,34.723881,34.723881,34.723881],
@@ -52,8 +52,8 @@ HUMIDITY:[65,71,80,66,72],
 MyName:"PACKET3",
 type:"Heat Sensitive",
 AMBIENTTEMP:[45,43,45,44,43],
-OBJECTTEMP:[23,24,23,22,21],
-HUMIDITY:[65,71,80,66,72],
+OBJECTTEMP:[53,24,23,22,51],
+HUMIDITY:[75,71,80,66,72],
 	ACCELX	:[23,24,23,22,21],
 	ACCELY	:[23,24,23,22,21],
 	ACCELZ	:[23,24,23,22,21],
@@ -79,11 +79,11 @@ HUMIDITY:[65,71,80,66,72],
 		}
 	
 	$scope.changeColor = function(data,index){
-	if(index == 0){
+	if(index == 0 && data == true ){
 		$scope.message = "packet have exceeded permissible vibration range";
-	}	if(index == 1){
+	}	if(index == 1 && data == true){
 			$scope.message = "Packet is exposed to direct sunlight and high humidity";
-		}	if(index == 2){
+		}	if(index == 2 && data == true){
 				$scope.message = "Packet is exposed to intense heat and humidity";
 			}
 	};
@@ -141,4 +141,5 @@ var TemperatureFlag = [];
 		}
 	};	
 	$scope.packets[2]["Flag2"]=TemperatureFlag;
+	console.log($scope.packets)
 	});

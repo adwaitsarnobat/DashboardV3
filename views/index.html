@@ -35,37 +35,19 @@
     </div>
   </div>
 </nav>
-<div class="container-fluid" style="margin-top:80px">
-	<div class="row">
-	<div class="col-md-4 panel panel-primary guageHeight" >
-	<div class="panel-heading">meter1</div>{{packets[0].Flag0[0]}}
-				<div id="gaugeDemo" class="gauge gauge-big  panel-body" ng-class="{guage-red:true}">
-				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
-				</div>
+<div class="container-fluid" style="margin-top:80px"></div>
 	
+	<div>
+	<div class="alert alert-info " ng-hide="message || packetDetail" style="text-align:center;">
+		<strong style="color:white">info! will inform if something goes wrong</strong>
 	</div>
-	<div class="col-md-4 panel panel-primary guageHeight" >
-	<div class="panel-heading">meter2</div>
-				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body">
-				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
-				</div>
-	
-	</div>
-	<div class="col-md-4 panel panel-primary guageHeight" >
-	<div class="panel-heading">meter3</div>
-				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body">
-				<div class="gauge-arrow" style="transform: rotate(-45deg);"></div>
-				</div>
-	
-	</div>
-	</div>
-	
 	<div class="alert alert-danger " ng-show="message && !packetDetail" style="text-align:center;background-color:red">
-  <strong style="color:white">{{message}}!!!</strong>
-</div>
-<div class="row table-responsive" ng-show="!packetDetail">
+		<strong style="color:white">{{message}}!!!</strong>
+	</div>
+	</div>
+<div class="row table-responsive" ng-show="!packetDetail" style="width:auto;margin:5px">
 	
-	<table class="table table-bordered table-hover table-responsive" style="width:auto;margin:5px" ng-mouseleave="changeColordrop()">
+	<table class="table table-bordered table-hover table-responsive"  >
   <thead class="blue-grey lighten-4" style="background-color:deepskyblue">
     <tr>
       <th>#Name</th>
@@ -90,8 +72,8 @@
     </tr>
   </thead>
   <tbody >
-    <tr ng-repeat="item in packets" class="test{{$index}}" ng-class="{'test{{$index}}':FlagFn(item,$index) == false}"  ng-mouseover="changeColor(item,$index)">
-      <td ng-click="PacketLoad($index)" style="cursor:pointer"><a href="#">{{item.MyName}}</a></td>
+    <tr ng-repeat="item in packets"  ng-class="{'test{{$index}}':FlagFn(item,$index) == true}"  ng-mouseover="changeColor(FlagFn(item,$index),$index)" ng-mouseleave="changeColordrop()" style="cursor:pointer">
+      <td ng-click="PacketLoad($index)"><a href="#">{{item.MyName}}</a></td>
       <td>{{item.type}}</td>
       <td>{{item.AMBIENTTEMP[0]}}</td>
       <td>{{item.OBJECTTEMP[0]}}</td>
