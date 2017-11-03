@@ -18,6 +18,7 @@ var mydb;
 * }
 */
 app.post("/api/visitors", function (request, response) {
+	console.log("in")
   var userName = request.body.name;
   if(!mydb) {
     console.log("No database.");
@@ -62,7 +63,55 @@ app.get("/api/visitors", function (request, response) {
   });
 });
 
+// db////
+var ibmdb = require('ibm_db');
+ /* Host name:
+dashdb-entry-yp-dal09-10.services.dal.bluemix.net
+Port number:
+50001
+Database name:
+BLUDB
+User ID:
+dash14883
+Password:
+ 
+6rJEV_wu3gA_
+Version:
+Compatible with DB2 for Linux, UNIX, and Windows, Version 11.1 or later
+ 
+Table to refer : DASH14883. TIDATA13 */
+//alert("inn")
+/* To view your app, open this link in your browser: http://localhost:3000
+{ Error: [IBM][CLI Driver] SQL30081N  A communication error has been detected. C
+ommunication protocol being used: "TCP/IP".  Communication API being used: "SOCK
+ETS".  Location where the error was detected: "169.44.98.126".  Communication fu
+nction detecting the error: "recv".  Protocol specific error code(s): "10054", "
+*", "0".  SQLSTATE=08001
 
+    at Error (native)
+  errors: [],
+  error: '[node-odbc] SQL_ERROR',
+  message: '[IBM][CLI Driver] SQL30081N  A communication error has been detected
+. Communication protocol being used: "TCP/IP".  Communication API being used: "S
+OCKETS".  Location where the error was detected: "169.44.98.126".  Communication
+ function detecting the error: "recv".  Protocol specific error code(s): "10054"
+, "*", "0".  SQLSTATE=08001\r\n',
+  state: '08001' }
+ */
+ibmdb.open("DATABASE='BLUDB';HOSTNAME=dashdb-entry-yp-dal09-10.services.dal.bluemix.net;UID='dash14883';PWD='6rJEV_wu3gA_';PORT=50001;PROTOCOL=TCPIP", function (err,conn) {
+  if (err) return console.log(err);
+  
+  conn.query('select * from DASH14883.TIDATA13', function (err, data) {
+    if (err) console.log(err);
+    else console.log(data);
+ 
+    conn.close(function () {
+      console.log('done');
+    });
+  });
+});
+  
+// db////
 // load local VCAP configuration  and service credentials
 var vcapLocal;
 try {
@@ -87,6 +136,7 @@ if (appEnv.services['cloudantNoSQLDB'] || appEnv.getService(/cloudant/)) {
      var cloudant = Cloudant(appEnv.getService(/cloudant/).credentials);
   }
 
+	
   //database name
   var dbName = 'mydb';
 

@@ -10,10 +10,10 @@ OBJECTTEMP:[23,24,23,22,21],
 HUMIDITY:[65,71,80,66,72],
 	ACCELX	:[23,24,23,22,21],
 	ACCELY	:[23,24,23,22,21],
-	ACCELZ	:[53,24,23,52,21],
+	ACCELZ	:[53,24,23,53,21],
 	GYROX	:[19,22,32,12,22],
 	GYROY	:[12,12,12,13,12],
-	GYROZ	:[11,14,13,50,33],
+	GYROZ	:[11,14,13,49,33],
 	MAGX	:[23,24,23,22,21],
 	MAGY	:[23,24,23,22,21],
 	MAGZ	:[23,24,23,22,21],
@@ -40,7 +40,7 @@ HUMIDITY:[75,71,80,66,72],
 	MAGX	:[23,24,23,22,21],
 	MAGY	:[23,24,23,22,21],
 	MAGZ	:[23,24,23,22,21],
-	LIGHT	:[53,24,53,22,21],
+	LIGHT	:[49,24,45,22,21],
 	TIMESENT	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
 	TIMEAUTO	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
 	LATTITUDE	:[30.2922902,30.2922902,34.723881,34.723881,34.723881,34.723881],
@@ -72,9 +72,16 @@ HUMIDITY:[75,71,80,66,72],
 	PACKETTYPE_DESC:[]
 }
 ]
-	 
+	 function checkFlagStatus(value){
+					 console.log(value)
+				return (value == true)
+			}
 	$scope.FlagFn = function(val,v2){
-		var data = (v2==0?val.Flag0[0] : (v2==1 ? val.Flag1[0]: (v2==2 ? val.Flag2[0]: val.Flag0[0])));
+		
+		/* console.log(val.Flag0)
+		if(v2 == 0)		console.log(val.Flag0.find(checkFlagStatus)) */
+
+		var data = (v2==0?val.Flag0.find(checkFlagStatus) : (v2==1 ? val.Flag1.find(checkFlagStatus): (v2==2 ? val.Flag2.find(checkFlagStatus): "")));
 			return data
 		}
 	
@@ -141,8 +148,8 @@ var TemperatureFlag = [];
 		}
 	};	
 	$scope.packets[2]["Flag2"]=TemperatureFlag;
-	$scope.packet1 = $scope.packets[0].Flag0[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
-	$scope.packet2 = $scope.packets[1].Flag1[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
-	$scope.packet3 = $scope.packets[2].Flag2[0]?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
+	$scope.packet1 = $scope.packets[0].Flag0.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
+	$scope.packet2 = $scope.packets[1].Flag1.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
+	$scope.packet3 = $scope.packets[2].Flag2.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
 	console.log($scope.packets)
 	});
