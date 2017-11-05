@@ -1,5 +1,26 @@
-var express = require("express");
+var express = require('express');
+var http = require('http');
+var path = require('path');
+var ibmdb = require('ibm_db');
+
+
 var app = express();
+
+// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+//app.use(express.favicon());
+//app.use(express.logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded());
+//app.use(express.methodOverride());
+//app.use(express.cookieParser('your secret here'));
+//app.use(express.session());
+//app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
+var db2;
+var hasConnect = false;
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser')
 
@@ -11,57 +32,6 @@ app.use(bodyParser.json())
 
 var mydb;
 
-/* Endpoint to greet and add a new visitor to database.
-* Send a POST request to localhost:3000/api/visitors with body
-* {
-* 	"name": "Bob"
-* }
-*/
-app.post("/api/visitors", function (request, response) {
-	console.log("in")
-  var userName = request.body.name;
-  if(!mydb) {
-    console.log("No database.");
-    response.send("Hello " + userName + "!");
-    return;
-  }
-  // insert the username as a document
-  mydb.insert({ "name" : userName }, function(err, body, header) {
-    if (err) {
-      return console.log('[mydb.insert] ', err.message);
-    }
-    response.send("Hello " + userName + "! I added you to the database.");
-  });
-});
-
-/**
- * Endpoint to get a JSON array of all the visitors in the database
- * REST API example:
- * <code>
- * GET http://localhost:3000/api/visitors
- * </code>
- *
- * Response:
- * [ "Bob", "Jane" ]
- * @return An array of all the visitor names
- */
-app.get("/api/visitors", function (request, response) {
-  var names = [];
-  if(!mydb) {
-    response.json(names);
-    return;
-  }
-
-  mydb.list({ include_docs: true }, function(err, body) {
-    if (!err) {
-      body.rows.forEach(function(row) {
-        if(row.doc.name)
-          names.push(row.doc.name);
-      });
-      response.json(names);
-    }
-  });
-});
 
 // db////
 var ibmdb = require('ibm_db');
@@ -80,38 +50,65 @@ Version:
 Compatible with DB2 for Linux, UNIX, and Windows, Version 11.1 or later
  
 Table to refer : DASH14883. TIDATA13 */
-//alert("inn")
-/* To view your app, open this link in your browser: http://localhost:3000
-{ Error: [IBM][CLI Driver] SQL30081N  A communication error has been detected. C
-ommunication protocol being used: "TCP/IP".  Communication API being used: "SOCK
-ETS".  Location where the error was detected: "169.44.98.126".  Communication fu
-nction detecting the error: "recv".  Protocol specific error code(s): "10054", "
-*", "0".  SQLSTATE=08001
+var db2;
+var hasConnect = false;
 
-    at Error (native)
-  errors: [],
-  error: '[node-odbc] SQL_ERROR',
-  message: '[IBM][CLI Driver] SQL30081N  A communication error has been detected
-. Communication protocol being used: "TCP/IP".  Communication API being used: "S
-OCKETS".  Location where the error was detected: "169.44.98.126".  Communication
- function detecting the error: "recv".  Protocol specific error code(s): "10054"
-, "*", "0".  SQLSTATE=08001\r\n',
-  state: '08001' }
- */
-ibmdb.open("DATABASE='BLUDB';HOSTNAME=dashdb-entry-yp-dal09-10.services.dal.bluemix.net;UID='dash14883';PWD='6rJEV_wu3gA_';PORT=50001;PROTOCOL=TCPIP", function (err,conn) {
-  if (err) return console.log(err);
-  
-  conn.query('select * from DASH14883.TIDATA13', function (err, data) {
-    if (err) console.log(err);
-    else console.log(data);
- 
-    conn.close(function () {
-      console.log('done');
-    });
-  });
+// Set VCAP environment variable to run program locally
+process.env['VCAP_SERVICES'] = '{"dashDB": [ { "name": "BLUDB","label": "dashDB", "plan": "Entry", "credentials": {"port": 50000,"db": "BLUDB",  "username": "dash14883","host": "dashdb-entry-yp-dal09-10.services.dal.bluemix.net","https_url": "https://dashdb-entry-yp-dal09-10.services.dal.bluemix.net:8443","hostname": "dashdb-entry-yp-dal09-10.services.dal.bluemix.net","jdbcurl":"jdbc:db2://dashdb-entry-yp-dal09-10.services.dal.bluemix.net:50000/BLUDB","uri": "db2://dash14883:6rJEV_wu3gA_@dashdb-entry-yp-dal09-10.services.dal.bluemix.net:50000/BLUDB","password": "6rJEV_wu3gA_" } } ]}';
+
+
+
+if (process.env.VCAP_SERVICES) {
+    var env = JSON.parse(process.env.VCAP_SERVICES);
+	console.log("yeayayaaaaaaaaaaaaaaaaaaaaaa")
+	if (env['dashDB']) {
+        hasConnect = true;
+		db2 = env['dashDB'][0].credentials;
+	}
+	
+}
+
+if ( hasConnect == false ) {
+
+   db2 = {
+        db: "BLUDB",
+        hostname: "dashdb-entry-yp-dal09-10.services.dal.bluemix.net",
+        port: 50000,
+        username: "dash14883",
+        password: "6rJEV_wu3gA_"
+     };
+}
+
+var connString = "DRIVER={DB2};DATABASE=" + db2.db + ";UID=" + db2.username + ";PWD=" + db2.password + ";HOSTNAME=" + db2.hostname + ";port=" + db2.port;
+
+//app.get('/con', routes.listSysTables(ibmdb,connString));
+app.get('/con', function(req,res){
+	       ibmdb.open(connString, function(err, conn) {
+			if (err ) {
+			 res.send("error occurred " + err.message);
+			}
+			else {
+				conn.query("SELECT * from DASH14883.TIDATA13", function(err, tables, moreResultSets) {
+							
+							
+				if ( !err ) { 
+					console.log(tables);	
+					res.send(tables);					
+				} else {
+				   res.send("error occurred " + err.message);
+				}
+
+				/*
+					Close the connection to the database
+					param 1: The callback function to execute on completion of close function.
+				*/
+				conn.close(function(){
+					console.log("Connection Closed");
+					});
+				});
+			}
+		} );
 });
-  
-// db////
 // load local VCAP configuration  and service credentials
 var vcapLocal;
 try {

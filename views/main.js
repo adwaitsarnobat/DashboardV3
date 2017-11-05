@@ -1,155 +1,116 @@
 var app = angular.module('vibrationDashboard', []);
-app.controller('mainCtrl', function($scope) {
-    $scope.Title = "Vibration Dashboard";
-$scope.packets=[
-{
-MyName:"PACKET1",
-type:"VIB Sensitive",
-AMBIENTTEMP:[45,43,45,44,43],
-OBJECTTEMP:[23,24,23,22,21],
-HUMIDITY:[65,71,80,66,72],
-	ACCELX	:[23,24,23,22,21],
-	ACCELY	:[23,24,23,22,21],
-	ACCELZ	:[53,24,23,53,21],
-	GYROX	:[19,22,32,12,22],
-	GYROY	:[12,12,12,13,12],
-	GYROZ	:[11,14,13,49,33],
-	MAGX	:[23,24,23,22,21],
-	MAGY	:[23,24,23,22,21],
-	MAGZ	:[23,24,23,22,21],
-	LIGHT	:[23,24,23,22,21],
-	TIMESENT	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	TIMEAUTO	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	LATTITUDE	:[30.2922902,30.2922902,34.723881,34.723881,34.723881,34.723881],
-	LONGITUDE	:[-97.9071442,-97.9071442,-97.9071442,-97.9071442,-97.9071442],
-	PACKETTYPE	:[],
-	PACKETTYPE_DESC:[]
-},
-{
-MyName:"PACKET2",
-type:"LIGHT Sensitive",
-AMBIENTTEMP:[45,43,45,44,43],
-OBJECTTEMP:[23,24,23,22,21],
-HUMIDITY:[75,71,80,66,72],
-	ACCELX	:[23,24,23,22,21],
-	ACCELY	:[23,24,23,22,21],
-	ACCELZ	:[23,24,23,22,21],
-	GYROX	:[19,22,32,12,22],
-	GYROY	:[12,12,12,13,12],
-	GYROZ	:[11,14,13,21,33],
-	MAGX	:[23,24,23,22,21],
-	MAGY	:[23,24,23,22,21],
-	MAGZ	:[23,24,23,22,21],
-	LIGHT	:[49,24,45,22,21],
-	TIMESENT	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	TIMEAUTO	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	LATTITUDE	:[30.2922902,30.2922902,34.723881,34.723881,34.723881,34.723881],
-	LONGITUDE	:[-97.9071442,-97.9071442,-97.9071442,-97.9071442,-97.9071442],
-	PACKETTYPE	:[],
-	PACKETTYPE_DESC:[]
-},
-{
-MyName:"PACKET3",
-type:"Heat Sensitive",
-AMBIENTTEMP:[45,43,45,44,43],
-OBJECTTEMP:[53,24,23,22,51],
-HUMIDITY:[75,71,80,66,72],
-	ACCELX	:[23,24,23,22,21],
-	ACCELY	:[23,24,23,22,21],
-	ACCELZ	:[23,24,23,22,21],
-	GYROX	:[19,22,32,12,22],
-	GYROY	:[12,12,12,13,12],
-	GYROZ	:[11,14,13,21,33],
-	MAGX	:[23,24,23,22,21],
-	MAGY	:[23,24,23,22,21],
-	MAGZ	:[23,24,23,22,21],
-	LIGHT	:[23,24,23,22,21],
-	TIMESENT	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	TIMEAUTO	:["10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM","10/25/20177:34:21 AM"],
-	LATTITUDE	:[30.2922902,30.2922902,34.723881,34.723881,34.723881,34.723881],
-	LONGITUDE	:[-97.9071442,-97.9071442,-97.9071442,-97.9071442,-97.9071442],
-	PACKETTYPE	:[],
-	PACKETTYPE_DESC:[]
-}
-]
-	 function checkFlagStatus(value){
-					 console.log(value)
-				return (value == true)
-			}
-	$scope.FlagFn = function(val,v2){
-		
-		/* console.log(val.Flag0)
-		if(v2 == 0)		console.log(val.Flag0.find(checkFlagStatus)) */
+app.controller('mainCtrl', function($scope,$http) {
+    $scope.Title = "Packet Details";
+	  $http.get("/con")
+    .then(function(response) {
+       console.log(response.data)
+	   $scope.JsonpacketData = response.data;
+	   dataSimplify();
+    });
+	
+	
+	$scope.packetNameObj = {};
+	$scope.vib_sensitive_effected_count =0;
+	$scope.vib_sensitive_notEffected_count =0;
+	$scope.heat_effected_count =0;
+	$scope.heat_notEffected_count =0;
+	$scope.light_effected_count =0;
+	$scope.light_notEffected_count =0;
+	EffectedPacketName = [];
+	dataSimplify = function(){	
 
-		var data = (v2==0?val.Flag0.find(checkFlagStatus) : (v2==1 ? val.Flag1.find(checkFlagStatus): (v2==2 ? val.Flag2.find(checkFlagStatus): "")));
-			return data
-		}
-	
-	$scope.changeColor = function(data,index){
-	if(index == 0 && data == true ){
-		$scope.message = "packet have exceeded permissible vibration range";
-	}	if(index == 1 && data == true){
-			$scope.message = "Packet is exposed to direct sunlight and high humidity";
-		}	if(index == 2 && data == true){
-				$scope.message = "Packet is exposed to intense heat and humidity";
-			}
-	};
-	$scope.changeColordrop = function(){
-	$scope.message= false;
-	};
-	
-	$scope.PacketLoad = function(index){
-		$scope.packetNum = index;
-		$scope.packetDetail = $scope.packets[index];
-		console.log($scope.packetDetail)
-	}
-	$scope.packetDetailFlag = function(index){
-		var flagNum = "Flag"+$scope.packetNum;
-		console.log($scope.packetDetail[flagNum][index])
-		return ($scope.packetDetail[flagNum][index])
+		angular.forEach($scope.JsonpacketData,function(value,index){ 
+		//console.log(value)
+		singlePacketName = value.MYNAME;
+		//if(!packetNameArr.find(packetCheck)){
+			//console.log(packetName	Obj[singlePacketName])
+			switch(value.PACKETTYPE_DESC){
+			case 'VIB SENSITIVE':
+					if ((value.GYROX + value.ACCELZ)/2 > 50){
+						value['exceeded'] = true;
+						$scope.vib_sensitive_effected_count++;
+						EffectedPacketName.push(singlePacketName);
+					}else{
+						value['exceeded'] = false;
+						$scope.vib_sensitive_notEffected_count++;						
+					}						
+				break;	
+			case 'HEAT SENSITIVE':
+					if (value.HUMIDITY>70 && value.OBJECTTEMP>50){
+						value['exceeded'] = true;
+						$scope.heat_effected_count++;
+						EffectedPacketName.push(singlePacketName);
+					}else{
+						value['exceeded'] = false;
+						$scope.heat_notEffected_count++;						
+					}
+				break;	
+			case 'LIGHT SENSITIVE':
+					if (value.HUMIDITY>70 && value.LIGHT>50){
+						value['exceeded'] = true;
+						$scope.light_effected_count++;
+						EffectedPacketName.push(singlePacketName);
+					}else{
+						value['exceeded'] = false;
+						$scope.light_notEffected_count++;						
+					}
+				break;	
 		
-	}
-	
-	
-	/* Vibration Meter : avg (accelZ, gyroZ) > 50 : Red Flag showing packet have exceeded permissible vibration range */
-	var Vibration_Meter = [];
-	for(var i=0; i<$scope.packets[0].ACCELZ.length; i++ ){
-		if((($scope.packets[0].ACCELZ[i] + $scope.packets[0].GYROZ[i])/2) > 50){
-			Vibration_Meter.push(true)
-			
-		}else{
-			Vibration_Meter.push(false)
-		}
-	};
-		$scope.packets[0]["Flag0"] = Vibration_Meter;
-	
-/* 	    Packettype : 2 (LIGHT Sensitive) 
- ->  If light > 50 and Humidity >70    : Red Flag : Packet is exposed to direct sunlight and high humidity
- */
-var lightFlag = [];
-		for(var i=0; i<$scope.packets[1].LIGHT.length; i++ ){
-		if(($scope.packets[1].LIGHT[i]>50 && $scope.packets[1].HUMIDITY[i]>70)){
-			lightFlag.push(true)
-		}else{
-			lightFlag.push(false)
-		}
-	};
-	$scope.packets[1]["Flag1"]=lightFlag;
+		} // switch case end
 
-/* 	      Packettype : 3 (Heat Sensitive)   
- ->  If objectTemp > 50 and humidity > 70 : Red Flag : Packet is exposed to intense heat and humidity
-  */
-var TemperatureFlag = [];
-		for(var i=0; i<$scope.packets[2].OBJECTTEMP.length; i++ ){
-		if(($scope.packets[2].OBJECTTEMP[i]>50 && $scope.packets[2].HUMIDITY[i]>70)){
-			TemperatureFlag.push(true)
-		}else{
-			TemperatureFlag.push(false)
-		}
-	};	
-	$scope.packets[2]["Flag2"]=TemperatureFlag;
-	$scope.packet1 = $scope.packets[0].Flag0.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
-	$scope.packet2 = $scope.packets[1].Flag1.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
-	$scope.packet3 = $scope.packets[2].Flag2.find(checkFlagStatus)?["gauge-red","transform: rotate(80deg)"]:["","transform: rotate(-80deg)"];
-	console.log($scope.packets)
+			if($scope.packetNameObj[singlePacketName] == undefined) $scope.packetNameObj[singlePacketName] = []; 
+				$scope.packetNameObj[singlePacketName].push(value);						
 	});
+	console.log($scope.packetNameObj);
+	console.log("vib:effected:"+$scope.vib_sensitive_effected_count);console.log("vib:not:effected"+$scope.vib_sensitive_notEffected_count);
+	console.log("heat:effected:"+$scope.heat_effected_count);console.log("heat:not:effected"+$scope.heat_notEffected_count);
+	console.log("light:effected:"+$scope.light_effected_count);console.log("light:not:effected"+$scope.light_notEffected_count);
+	 
+	  //meterGuage start
+	  var vibCount=($scope.vib_sensitive_effected_count/($scope.vib_sensitive_effected_count+$scope.vib_sensitive_notEffected_count));
+	  var heatCount = ($scope.heat_effected_count/($scope.heat_effected_count+$scope.heat_notEffected_count));
+	  var lightCount = $scope.light_effected_count/($scope.light_effected_count+$scope.light_notEffected_count);
+	 
+	 var vib_meterVal = parseInt(vibCount == 0.5? 0:(vibCount > 0.5 ? vibCount*80 : (vibCount < 0.5 ? vibCount*80-80 : -80)));
+	 var heat_meterVal = parseInt(heatCount == 0.5? 0:(heatCount > 0.5 ? heatCount*80 : (heatCount < 0.5 ? heatCount*80-80 : -80)));
+	 var light_meterVal = parseInt(lightCount == 0.5? 0:(lightCount > 0.5 ? lightCount*80 : (lightCount < 0.5 ? lightCount*80-80 : -80)));
+	 $scope.vibGuage = vib_meterVal >0 ?["gauge-red","transform: rotate("+vib_meterVal+"deg)"]:["gauge-green","transform: rotate("+vib_meterVal+"deg)"]; 
+	 $scope.heatGuage = heat_meterVal >0 ?["gauge-red","transform: rotate("+heat_meterVal+"deg)"]:["gauge-green","transform: rotate("+heat_meterVal+"deg)"]; 
+	 $scope.lightGuage = light_meterVal >0 ?["gauge-red","transform: rotate("+light_meterVal+"deg)"]:["gauge-green","transform: rotate("+light_meterVal+"deg)"]; 
+	 //meterGuage end 
+	 
+	}; // dataSimplify function End..
+
+	$scope.turnRed = function(valName){							
+			function checkFun(name) {
+				 if(name == valName){
+					 return true;
+				 };
+			};
+			 if(EffectedPacketName.find(checkFun)){
+				return true;
+			 }else{return false;}		
+	}; //turnRed fun end
+	
+ 	$scope.PacketLoad = function(packetName){
+			$scope.packetDetail = $scope.packetNameObj[packetName];
+		//console.log($scope.packetDetail)
+	};
+	 
+	$scope.ShowMsg = function(name,data){
+		function checkFun(valName) {
+					 if(name == valName){
+						 return true;
+					 };
+				};
+		if(data[0].PACKETTYPE_DESC == 'VIB SENSITIVE' && (EffectedPacketName.find(checkFun))){		
+			$scope.message = "packet have exceeded permissible vibration range";
+		}	if(data[0].PACKETTYPE_DESC == 'LIGHT SENSITIVE' && (EffectedPacketName.find(checkFun))){
+				$scope.message = "Packet is exposed to direct sunlight and high humidity";
+			}	if(data[0].PACKETTYPE_DESC == 'HEAT SENSITIVE' && (EffectedPacketName.find(checkFun))){
+					$scope.message = "Packet is exposed to intense heat and humidity";
+				}
+		};
+	$scope.changeColordrop = function(){$scope.message=null};	
+	
+});//End of MainCntrl..c**l..

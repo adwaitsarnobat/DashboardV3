@@ -22,7 +22,6 @@
     
 	
 	<script src="./angular.js" type="text/javascript"></script>
-	<script src="../server.js" type="text/javascript"></script>
 	<script src="./main.js" type="text/javascript"></script>
 </head>
 
@@ -36,41 +35,42 @@
     </div>
   </div>
 </nav>
-<div class="container-fluid" style="margin-top:80px"></div>
+<div class="container-fluid" style="margin-top:80px" ng-show="JsonpacketData" ng-cloak>
+<!-- guageMeter -->
 
-	<!-- guage -->
-	<div class="row custStyle" ng-show="!packetDetail">
+ 	<div class="row custStyle" ng-show="!packetDetail">
 	<div class="col-md-4 panel panel-primary guageHeight">
 	<div class="panel-heading">Vibration Sensitive</div>
-				<div id="gaugeDemo" class="gauge gauge-big panel-body" ng-class="packet1[0]">
-				<div class="gauge-arrow" style={{packet1[1]}}></div>
-				</div>
-	
-	</div>
-	<div class="col-md-4 panel panel-primary guageHeight" >
-	<div class="panel-heading">LIGHT Sensitive</div>
-				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="packet2[0]">
-				<div class="gauge-arrow" style={{packet2[1]}}></div>
+				<div id="gaugeDemo" class="gauge gauge-big panel-body" ng-class="vibGuage[0]">
+				<div class="gauge-arrow" style={{vibGuage[1]}}></div>
 				</div>
 	
 	</div>
 	<div class="col-md-4 panel panel-primary guageHeight" >
 	<div class="panel-heading">Heat Sensitive</div>
-				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="packet3[0]">
-				<div class="gauge-arrow" style={{packet3[1]}}></div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="heatGuage[0]">
+				<div class="gauge-arrow" style={{heatGuage[1]}}></div>
+				</div>
+	
+	</div>
+	<div class="col-md-4 panel panel-primary guageHeight" >
+	<div class="panel-heading">Light Sensitive</div>
+				<div id="gaugeDemo" class="gauge gauge-big gauge-grey panel-body" ng-class="lightGuage[0]">
+				<div class="gauge-arrow" style={{lightGuage[1]}}></div>
 				</div>
 	
 	</div>
 	</div>
-	<!-- guage -->
-	
-	<div>
-	<div class="alert alert-info " ng-hide="message || packetDetail" style="text-align:center;">
+	<!-- guageMeter -->
+	<div ng-show="!packetDetail">
+	<div class="positionFix">
+	<div class="alert alert-info " ng-hide="message || packetDetail" style="text-align:center;opacity:0.4">
 		<strong style="color:white">info! will inform if something goes wrong</strong>
 	</div>
-	<div class="alert alert-danger " ng-show="message && !packetDetail" style="text-align:center;background-color:red">
+	<div class="alert alert-danger " ng-show="message  && !packetDetail" style="text-align:center;background-color:red">
 		<strong style="color:white">{{message}}!!!</strong>
 	</div>
+	</div><hr><hr><hr>
 	</div>
 <div class="row table-responsive custStyle" ng-show="!packetDetail" >
 	
@@ -78,6 +78,7 @@
   <thead class="blue-grey lighten-4" style="background-color:deepskyblue">
     <tr>
       <th>#Name</th>
+      <th>PACKETTYPE_DESC</th>
       <th>Type</th>
       <th>AMBIENTTEMP</th>
       <th>OBJECTTEMP</th>
@@ -99,26 +100,27 @@
     </tr>
   </thead>
   <tbody >
-    <tr ng-repeat="item in packets"  ng-class="{'test{{$index}}':FlagFn(item,$index) == true}"  ng-mouseover="changeColor(FlagFn(item,$index),$index)" ng-mouseleave="changeColordrop()" style="cursor:pointer">
-      <td ng-click="PacketLoad($index)"><a href="#">{{item.MyName}}</a></td>
-      <td>{{item.type}}</td>
-      <td>{{item.AMBIENTTEMP[0]}}</td>
-      <td>{{item.OBJECTTEMP[0]}}</td>
-      <td>{{item.HUMIDITY[0]}}</td>
-      <td>{{item.ACCELX[0]}}</td>
-      <td>{{item.ACCELY[0]}}</td>
-      <td>{{item.ACCELZ[0]}}</td>
-      <td>{{item.GYROX[0]}}</td>
-      <td>{{item.GYROY[0]}}</td>
-      <td>{{item.GYROZ[0]}}</td>
-      <td>{{item.MAGX[0]}}</td>
-      <td>{{item.MAGY[0]}}</td>
-      <td>{{item.MAGZ[0]}}</td>
-      <td>{{item.LIGHT[0]}}</td>
-      <td>{{item.TIMESENT[0]}}</td>
-      <td>{{item.TIMEAUTO[0]}}</td>
-      <td>{{item.LATTITUDE[0]}}</td>
-      <td>{{item.LONGITUDE[0]}}<td>
+    <tr ng-repeat="(x,y) in packetNameObj"  ng-class="{'turnRed':turnRed(x)==true}" ng-mouseover="ShowMsg(x,y)" ng-mouseleave="changeColordrop()" style="cursor:pointer">
+      <td ng-click="PacketLoad(x)"><a href="#">{{x}}</a></td>
+      <td >{{y[0].PACKETTYPE_DESC}}</td>
+      <td>{{y[0].PACKETTYPE}}</td>
+      <td>{{y[0].AMBIENTTEMP}}</td>
+      <td>{{y[0].OBJECTTEMP}}</td>
+      <td>{{y[0].HUMIDITY}}</td>
+      <td>{{y[0].ACCELX}}</td>
+      <td>{{y[0].ACCELY}}</td>
+      <td>{{y[0].ACCELZ}}</td>
+      <td>{{y[0].GYROX}}</td>
+      <td>{{y[0].GYROY}}</td>
+      <td>{{y[0].GYROZ}}</td>
+      <td>{{y[0].MAGX}}</td>
+      <td>{{y[0].MAGY}}</td>
+      <td>{{y[0].MAGZ}}</td>
+      <td>{{y[0].LIGHT}}</td>
+      <td>{{y[0].TIMESENT}}</td>
+      <td>{{y[0].TIMEAUTO}}</td>
+      <td>{{y[0].LATTITUDE}}</td>
+      <td>{{y[0].LONGITUDE}}<td>
     </tr>    
   </tbody>
 </table>
@@ -127,13 +129,14 @@
 </div>
    
    <div class="container-fluid row table-responsive panel panel-primary" ng-show="packetDetail">
-   <div class="panel-heading row"><h3 class="col-md-11 centerText">{{packetDetail.MyName}}</h3>
+   <div class="panel-heading row"><h3 class="col-md-11 centerText">{{packetDetail[0].MYNAME}}</h3>
 	<button type="button" class="btn btn-default col-md-1" ng-click="packetDetail = !packetDetail">Back</button>
 	</div>
 	<table class="table table-bordered  table-responsive panel-body" style="width:auto;margin:5px";>
   <thead class="blue-grey lighten-4" style="background-color:deepskyblue">
     <tr>
       <th>#Name</th>
+      <th>PACKETTYPE_DESC</th>
       <th>Type</th>
       <th>AMBIENTTEMP</th>
       <th>OBJECTTEMP</th>
@@ -155,27 +158,28 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="item in packetDetail.AMBIENTTEMP track by $index"  ng-class="{'Flag':packetDetailFlag($index) == true}" >
-      <td>{{packetDetail.MyName}}</td>
-      <td>{{packetDetail.type}}</td>
-      <td>{{packetDetail.AMBIENTTEMP[$index]}}</td>
-      <td>{{packetDetail.OBJECTTEMP[$index]}}</td>
-      <td>{{packetDetail.HUMIDITY[$index]}}</td>
-      <td>{{packetDetail.ACCELX[$index]}}</td>
-      <td>{{packetDetail.ACCELY[$index]}}</td>
-      <td>{{packetDetail.ACCELZ[$index]}}</td>
-      <td>{{packetDetail.GYROX[$index]}}</td>
-      <td>{{packetDetail.GYROY[$index]}}</td>
-      <td>{{packetDetail.GYROZ[$index]}}</td>
-      <td>{{packetDetail.MAGX[$index]}}</td>
-      <td>{{packetDetail.MAGY[$index]}}</td>
-      <td>{{packetDetail.MAGZ[$index]}}</td>
-      <td>{{packetDetail.LIGHT[$index]}}</td>
-      <td>{{packetDetail.TIMESENT[$index]}}</td>
-      <td>{{packetDetail.TIMEAUTO[$index]}}</td>
-      <td>{{packetDetail.LATTITUDE[$index]}}</td>
-      <td>{{packetDetail.LONGITUDE[$index]}}<td>
-    </tr>    
+    <tr ng-repeat="item in packetDetail track by $index"  ng-class="{'Flag':item.exceeded}" >
+      <td>{{item.MYNAME}}{{$$index}}</td>
+      <td>{{item.PACKETTYPE_DESC}}</td>
+      <td>{{item.PACKETTYPE}}</td>
+      <td>{{item.AMBIENTTEMP}}</td>
+      <td>{{item.OBJECTTEMP}}</td>
+      <td>{{item.HUMIDITY}}</td>
+      <td>{{item.ACCELX}}</td>
+      <td>{{item.ACCELY}}</td>
+      <td>{{item.ACCELZ}}</td>
+      <td>{{item.GYROX}}</td>
+      <td>{{item.GYROY}}</td>
+      <td>{{item.GYROZ}}</td>
+      <td>{{item.MAGX}}</td>
+      <td>{{item.MAGY}}</td>
+      <td>{{item.MAGZ}}</td>
+      <td>{{item.LIGHT}}</td>
+      <td>{{item.TIMESENT}}</td>
+      <td>{{item.TIMEAUTO}}</td>
+      <td>{{item.LATTITUDE}}</td>
+      <td>{{item.LONGITUDE}}<td> 
+ </tr>    
   </tbody>
 </table>
 </div>
